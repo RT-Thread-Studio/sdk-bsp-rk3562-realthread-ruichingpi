@@ -1,0 +1,146 @@
+&gpio0_c2 {
+	mux = <2>;
+};
+
+&gpio0_c3 {
+	mux = <3>;
+};
+
+&gpio0_c4 {
+	mux = <3>;
+};
+
+&gpio0_c5 {
+	mux = <3>;
+};
+
+&gpio3_a0 {
+	mux = <1>;
+};
+
+&gpio3_a1 {
+	mux = <1>;
+};
+
+&gpio4_a0 {
+	mux = <2>;
+};
+
+&gpio4_a1 {
+	mux = <2>;
+};
+
+&gpio4_a2 {
+	mux = <2>;
+};
+
+&gpio4_a3 {
+	mux = <2>;
+};
+
+&gpio4_a4 {
+	mux = <2>;
+};
+
+&gpio4_a5 {
+	mux = <2>;
+};
+
+&gpio4_a6 {
+	mux = <2>;
+};
+
+&gpio4_a7 {
+	mux = <2>;
+};
+&gpio4_b0 {
+	mux = <2>;
+};
+
+&gpio4_b1 {
+	mux = <2>;
+};
+
+&gpio4_b2 {
+	mux = <2>;
+};
+
+&gpio4_b3 {
+	mux = <2>;
+};
+
+&gpio3_b7 {
+	mux = <3>;
+};
+
+&gpio3_c0 {
+	mux = <3>;
+};
+
+&gpio3_c2 {
+	mux = <1>;
+};
+
+&gpio3_c3 {
+	mux = <1>;
+};
+
+&gpio3_b2 {
+    mux = <3>;
+};
+
+&gpio3_b3 {
+    mux = <3>;
+};
+
+&gpio0_c6 {
+	mux = <2>;
+};
+
+&gpio0_c7 {
+	mux = <2>;
+};
+
+&gpio1_a0 {
+	mux = <1>;
+};
+
+&gpio1_a1 {
+	mux = <1>;
+};
+
+&gpio1_a2 {
+	mux = <1>;
+};
+
+&gpio1_a3 {
+	mux = <1>;
+};
+
+&gpio1_a4 {
+	mux = <1>;
+};
+
+&gpio1_a5 {
+	mux = <1>;
+};
+
+&gpio1_a6 {
+	mux = <1>;
+};
+
+&gpio1_a7 {
+	mux = <1>;
+};
+
+&gpio1_b0 {
+	mux = <1>;
+};
+
+&gpio1_b1 {
+	mux = <1>;
+};
+
+&gpio1_b2 {
+	mux = <1>;
+};

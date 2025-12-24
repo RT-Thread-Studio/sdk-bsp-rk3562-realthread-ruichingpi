@@ -1,0 +1,108 @@
+/**
+ * RT-Thread RuiChing
+ *
+ * COPYRIGHT (C) 2024-2025 Shanghai Real-Thread Electronic Technology Co., Ltd.
+ * All rights reserved.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+/dts-v1/;
+#include "rc-pi-3562-v1_0.dtsi"
+
+/ {
+
+	rockchip_amp: rockchip-amp {
+		compatible = "rockchip,amp";
+		amp-cpu-aff-maskbits = /bits/ 64 <0x0 0x1 0x1 0x2 0x2 0x4 0x3 0x8>;
+		amp-irqs = /bits/ 64 <
+			GIC_AMP_IRQ_CFG_ROUTE(71, 0xd0, CPU_GET_AFFINITY(3, 0))   // UART9_IRQn
+            GIC_AMP_IRQ_CFG_ROUTE(147, 0xd0, CPU_GET_AFFINITY(3, 0))   // mailbox_bb
+		>;
+
+		status = "okay";
+	};
+
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		/* remote amp core address */
+		rtt_reserved {
+			reg = <0x0 0x03f00000 0x0 0x08000000>;
+			no-map;
+		};
+
+		/* remote amp core address */
+		amp_shmem_reserved: amp-shmem@7b00000 {
+			reg = <0x0 0x07b00000 0x0 0x100000>;
+			no-map;
+		};
+		rpmsg_reserved: rpmsg@7a00000 {
+			reg = <0x0 0x07a00000 0x0 0x100000>;
+			no-map;
+		};
+		rpmsg_dma_reserved: rpmsg-dma@7b00000 {
+			compatible = "shared-dma-pool";
+			reg = <0x0 0x07b00000 0x0 0x100000>;
+			no-map;
+		};
+
+	};
+
+	/* 目前 rpmsg 大小需要2MB对齐 */
+
+	rpmsg: rpmsg@7a00000 {
+		compatible = "rockchip,rpmsg";
+		mbox-names = "rpmsg-rx", "rpmsg-tx";
+		mboxes = <&mailbox 0 &mailbox 3>;
+		rockchip,vdev-nums = <1>;
+		/* CPU3: link-id 0x03; MCU: link-id 0x04; */
+		rockchip,link-id = <0x01>;
+		// reg = <0x0 0x7c00000 0x0 0x20000>;
+		reg = <0x0 0x7a00000 0x0 0x200000>;
+		memory-region = <&rpmsg_dma_reserved>;
+		status = "okay";
+
+        // 方法1：使用 rpmsg_chrdev 作为服务名
+        rpmsg_chrdev {
+            compatible = "rpmsg,chrdev";  // 兼容性字符串
+            rpmsg,name = "rpmsg_chrdev";  // 服务名
+            status = "okay";
+        };
+	};
+
+	rtt_rpmsg: rtt-rpmsg@7a00000 {
+		compatible = "rockchip,rpmsg";
+		// reg = <0x3a00000 0x020000>;
+		reg = <0x0 0x7a00000 0x0 0x200000>;
+		mbox-names = "rpmsg-rx", "rpmsg-tx";
+		// mboxes = <&mailbox2_amp 0 &mailbox0_amp 0>;
+		mboxes = <&mailbox_rtt 3 &mailbox_rtt 0>;
+		rockchip,vdev-nums = <1>;
+		/* CPU2: link-id 0x02; */
+		rockchip,link-id = <0x01>;
+		timeout-ms = <5000>;
+		status = "okay,rtt";
+		rockchip,rpmsg-remote;
+    };
+
+	mailbox_rtt: mailbox_rtt@ffae0000 {
+		compatible = "rockchip,rk3562-mailbox",
+			     "rockchip,rk3368-mailbox";
+		reg = <0x0 0xffae0000 0x0 0x200>;
+		interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
+		clocks = <&cru PCLK_MAILBOX>;
+		clock-names = "pclk_mailbox";
+		#mbox-cells = <1>;
+		rtthread,tx-direction-b2a;
+		status = "okay,rtt";
+	};
+
+};
+
+&mailbox {
+	rockchip,txpoll-period-ms = <1>;
+	status = "okay";
+};

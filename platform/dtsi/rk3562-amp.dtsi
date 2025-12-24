@@ -1,0 +1,123 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright (c) 2023 Rockchip Electronics Co., Ltd.
+ */
+#include <dt-bindings/soc/rockchip-amp.h>
+
+/delete-node/ &cpu3;
+
+#define CPU_GET_AFFINITY(cpu, cluster) ((cpu) << 0 | ((cluster) << 8))
+
+/ {
+	rockchip_amp: rockchip-amp {
+		compatible = "rockchip,amp";
+		clocks = <&cru SCLK_UART9>, <&cru PCLK_UART9>,
+			<&cru CLK_I2C3>, <&cru PCLK_I2C3>,
+			<&cru CLK_CAN0>, <&cru PCLK_CAN0>,
+			<&cru CLK_PWM1_PERI>, <&cru PCLK_PWM1_PERI>,
+			<&cru CLK_PMU1_PWM0>, <&cru PCLK_PMU1_PWM0>,
+			<&cru ACLK_DMAC>,
+			<&cru CLK_PMU1_SPI0>, <&cru PCLK_PMU1_SPI0>, <&cru SCLK_IN_PMU1_SPI0>,
+			<&cru CLK_WDTNS>, <&cru PCLK_WDTNS>;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&uart9m1_xfer>;
+
+		amp-cpu-aff-maskbits = /bits/ 64 <0x0 0x1 0x1 0x2 0x2 0x4 0x3 0x8>;
+		amp-irqs = /bits/ 64 <
+			GIC_AMP_IRQ_CFG_ROUTE(71, 0xd0, CPU_GET_AFFINITY(3, 0))   // UART3_IRQn
+			GIC_AMP_IRQ_CFG_ROUTE(47, 0xd0, CPU_GET_AFFINITY(3, 0))   // I2C3_IRQn
+			GIC_AMP_IRQ_CFG_ROUTE(96, 0xd0, CPU_GET_AFFINITY(3, 0))   // CAN0_IRQn
+			GIC_AMP_IRQ_CFG_ROUTE(54, 0xd0, CPU_GET_AFFINITY(3, 0))   // PWM1_IRQn
+			GIC_AMP_IRQ_CFG_ROUTE(84, 0xd0, CPU_GET_AFFINITY(3, 0))   // SPI0_IRQn
+			GIC_AMP_IRQ_CFG_ROUTE(142, 0xd0, CPU_GET_AFFINITY(3, 0))  // DMAC0_ABORT_IRQn
+			GIC_AMP_IRQ_CFG_ROUTE(143, 0xd0, CPU_GET_AFFINITY(3, 0))  // DMAC0_IRQn
+		>;
+
+		status = "okay";
+	};
+
+	cpus-amp {
+		#address-cells = <2>;
+		#size-cells = <0>;
+
+		cpu3: cpu@3 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <0x0 0x3>;
+			enable-method = "psci";
+			clocks = <&scmi_clk ARMCLK>;
+			cpu-idle-states = <&CPU_SLEEP>;
+			operating-points-v2 = <&cpu0_opp_table>;
+			#cooling-cells = <2>;
+			dynamic-power-coefficient = <138>;
+		};
+	};
+
+	amp: amp@0 {
+        compatible = "rockchip,amp";
+        status = "okay,rtt";
+	};
+
+	chosen: chosen {
+		bootargs = "earlycon=uart8250,mmio32,0xff210000 console=ttyFIQ0 root=PARTUUID=614e0000-0000 rw rootwait";
+	};
+
+	fiq_debugger: fiq-debugger {
+		compatible = "rockchip,fiq-debugger";
+		rockchip,serial-id = <0>;
+		rockchip,wake-irq = <0>;
+		/* If enable uart uses irq instead of fiq */
+		rockchip,irq-mode-enable = <1>;
+		rockchip,baudrate = <115200>;  /* Only 115200 and 1500000 */
+		interrupts = <GIC_SPI 242 IRQ_TYPE_LEVEL_HIGH>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&uart0m0_xfer>;
+		status = "okay";
+	};
+
+	fiq_debugger_amp:fiq-debugger-amp {
+		compatible = "rockchip,fiq-debugger";
+		rockchip,serial-id = <9>;
+		rockchip,wake-irq = <0>;
+		rockchip,irq-mode-enable = <1>;
+		rockchip,baudrate = <115200>;  /* Only 115200 and 1500000 */
+		status = "okay,rtt";
+		pinctrl = <&gpio3_c2 &gpio3_c3>;
+	};
+
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		/* remote amp core address */
+		rtt_reserved {
+			reg = <0x0 0x03f00000 0x0 0x08000000>;
+			no-map;
+		};
+	};
+};
+
+&gic {
+	rtt-skip-init;
+};
+
+&arm_pmu {
+	interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>;
+};
+
+&uart9 {
+	dma-names = "rx";
+	pinctrl = <&gpio3_c2 &gpio3_c3>;
+	status = "disabled";
+	interrupt-affinity = <&cpu3>;
+};
+
+&gpio3_c2 {
+	mux = <3>;
+};
+
+&gpio3_c3 {
+	mux = <3>;
+};

@@ -1,0 +1,20 @@
+/**
+ * RT-Thread RuiChing
+ *
+ * COPYRIGHT (C) 2024-2025 Shanghai Real-Thread Electronic Technology Co., Ltd.
+ * All rights reserved.
+ *
+ * The license and distribution terms for this file may be
+ * found in the file LICENSE in this distribution.
+ */
+/dts-v1/;
+#include "rc-pi-3562-v1_0.dtsi"
+
+&pwm5 {
+	pinctrl = <&gpio0_c2>;
+	status = "okay,rtt";
+};
+
+&gpio0_c2 {
+	mux = <2>;
+};
