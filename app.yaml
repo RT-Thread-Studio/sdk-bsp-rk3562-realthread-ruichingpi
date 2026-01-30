@@ -575,7 +575,7 @@ features_zh:
 - 全场景无线扩展: 集成双频 2.4G/5.8G WiFi 与 BT5.0，提供稳定无线连接；配备 Mini PCIe 扩展接口，支持 4G/5G LTE 通信模块接入，拓展广域通信能力
 pkg_type: Board_Support_Packages
 pkg_vendor: Real-Thread
-pkg_version: 1.0.0
+pkg_version: 1.1.0
 template_projects:
 - builtin_files:
   - files_and_folders:
