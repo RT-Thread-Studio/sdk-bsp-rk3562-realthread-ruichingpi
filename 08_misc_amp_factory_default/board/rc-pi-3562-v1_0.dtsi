@@ -16,6 +16,7 @@
 #include "rk3562-linux.dtsi"
 #include "rk3562-rk809.dtsi"
 #include "rk3562-amp.dtsi"
+#include "rc-pi-3562-v1_0-mipi-800x1280.dtsi"
 
 / {
 	model = "Rockchip RK3562 IDO EVB3562 V2 Board";

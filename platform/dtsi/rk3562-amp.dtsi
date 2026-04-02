@@ -30,6 +30,7 @@
                        GIC_AMP_IRQ_CFG_ROUTE(84, 0xd0, CPU_GET_AFFINITY(3, 0))   // SPI0_IRQn
                        GIC_AMP_IRQ_CFG_ROUTE(142, 0xd0, CPU_GET_AFFINITY(3, 0))  // DMAC0_ABORT_IRQn
                        GIC_AMP_IRQ_CFG_ROUTE(143, 0xd0, CPU_GET_AFFINITY(3, 0))  // DMAC0_IRQn
+                        GIC_AMP_IRQ_CFG_ROUTE(77, 0xd0, CPU_GET_AFFINITY(0, 0))   // timer0
                >;
 		status = "okay";
 	};
@@ -37,7 +38,39 @@
 	cpus-amp {
 		#address-cells = <2>;
 		#size-cells = <0>;
-
+		cpu@0 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <0x0 0x0>;
+			enable-method = "psci";
+			clocks = <&scmi_clk ARMCLK>;
+			cpu-idle-states = <&CPU_SLEEP>;
+			operating-points-v2 = <&cpu0_opp_table>;
+			#cooling-cells = <2>;
+			dynamic-power-coefficient = <138>;
+		};
+		cpu@1 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <0x0 0x1>;
+			enable-method = "psci";
+			clocks = <&scmi_clk ARMCLK>;
+			cpu-idle-states = <&CPU_SLEEP>;
+			operating-points-v2 = <&cpu0_opp_table>;
+			#cooling-cells = <2>;
+			dynamic-power-coefficient = <138>;
+		};
+		cpu@2 {
+			device_type = "cpu";
+			compatible = "arm,cortex-a53";
+			reg = <0x0 0x2>;
+			enable-method = "psci";
+			clocks = <&scmi_clk ARMCLK>;
+			cpu-idle-states = <&CPU_SLEEP>;
+			operating-points-v2 = <&cpu0_opp_table>;
+			#cooling-cells = <2>;
+			dynamic-power-coefficient = <138>;
+		};
 		cpu3: cpu@3 {
 			device_type = "cpu";
 			compatible = "arm,cortex-a53";
@@ -53,11 +86,13 @@
 
 	amp: amp@0 {
         compatible = "rockchip,amp";
+        reg = <0x0 0x0 0x0 0x0>;
+        cpu = <&cpu3>;
         status = "okay,rtt";
 	};
 
-	chosen: chosen {
-		bootargs = "earlycon=uart8250,mmio32,0xff210000 console=ttyFIQ0 root=PARTUUID=614e0000-0000 rw rootwait";
+	chosen-amp {
+		bootargs = "earlycon=uart8250,mmio32,0xff6f0000 console=ttyFIQ0 root=PARTUUID=614e0000-0000 rw rootwait";
 	};
 
 	fiq_debugger: fiq-debugger {
@@ -105,7 +140,7 @@
 };
 
 &arm_pmu {
-	interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>;
+	interrupt-affinity = <&cpu0>, <&cpu1>, <&cpu2>, <&cpu3>;
 };
 
 &uart9 {
