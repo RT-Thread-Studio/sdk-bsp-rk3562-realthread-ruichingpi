@@ -226,7 +226,7 @@ static void ect_csp(void)
     tid = rt_thread_create("Ethercat", ethercat_entry, RT_NULL, 20480, 15, 10);
     if (tid != RT_NULL)
     {
-        rt_thread_control(tid, RT_THREAD_CTRL_BIND_CPU, (void *)2);
+        rt_thread_control(tid, RT_THREAD_CTRL_BIND_CPU, (void *)3);
         rt_thread_startup(tid);
     }
     else

@@ -9,20 +9,18 @@
  */
 /dts-v1/;
 #include "rc-pi-3562-v1_0.dtsi"
+#include "amp_shm.dtsi"
+
+&rockchip_amp {
+    clocks = <&cru SCLK_UART9>, <&cru PCLK_UART9>,
+            <&cru PCLK_TIMER>, <&cru CLK_TIMER0>, <&cru CLK_TIMER1>, <&cru CLK_TIMER2>,
+            <&cru CLK_TIMER3>, <&cru CLK_TIMER4>, <&cru CLK_TIMER5>,
+            <&cru CLK_GMAC_125M_CRU_I>, <&cru CLK_GMAC_50M_CRU_I>,
+            <&cru PCLK_GMAC>, <&cru ACLK_GMAC>;
+    status = "okay";
+};
 
 / {
-
-	rockchip_amp: rockchip-amp {
-		compatible = "rockchip,amp";
-		amp-cpu-aff-maskbits = /bits/ 64 <0x0 0x1 0x1 0x2 0x2 0x4 0x3 0x8>;
-		amp-irqs = /bits/ 64 <
-			GIC_AMP_IRQ_CFG_ROUTE(71, 0xd0, CPU_GET_AFFINITY(3, 0))   // UART9_IRQn
-            GIC_AMP_IRQ_CFG_ROUTE(147, 0xd0, CPU_GET_AFFINITY(3, 0))   // mailbox_bb
-		>;
-
-		status = "okay";
-	};
-
 	reserved-memory {
 		#address-cells = <2>;
 		#size-cells = <2>;
@@ -34,18 +32,23 @@
 			no-map;
 		};
 
+        rtt_reserved2 {
+			reg = <0x0 0x0f000000 0x0 0x01000000>;
+			no-map;
+		};
+
 		/* remote amp core address */
-		amp_shmem_reserved: amp-shmem@7b00000 {
-			reg = <0x0 0x07b00000 0x0 0x100000>;
+		amp_shmem_reserved: amp-shmem@c300000 {
+			reg = <0x0 0x0c300000 0x0 0x100000>;
 			no-map;
 		};
-		rpmsg_reserved: rpmsg@7a00000 {
-			reg = <0x0 0x07a00000 0x0 0x100000>;
+		rpmsg_reserved: rpmsg@c200000 {
+			reg = <0x0 0x0c200000 0x0 0x100000>;
 			no-map;
 		};
-		rpmsg_dma_reserved: rpmsg-dma@7b00000 {
+		rpmsg_dma_reserved: rpmsg-dma@c300000 {
 			compatible = "shared-dma-pool";
-			reg = <0x0 0x07b00000 0x0 0x100000>;
+			reg = <0x0 0x0c300000 0x0 0x100000>;
 			no-map;
 		};
 
@@ -53,7 +56,7 @@
 
 	/* 目前 rpmsg 大小需要2MB对齐 */
 
-	rpmsg: rpmsg@7a00000 {
+	rpmsg: rpmsg@c200000 {
 		compatible = "rockchip,rpmsg";
 		mbox-names = "rpmsg-rx", "rpmsg-tx";
 		mboxes = <&mailbox 0 &mailbox 3>;
@@ -61,7 +64,7 @@
 		/* CPU3: link-id 0x03; MCU: link-id 0x04; */
 		rockchip,link-id = <0x01>;
 		// reg = <0x0 0x7c00000 0x0 0x20000>;
-		reg = <0x0 0x7a00000 0x0 0x200000>;
+		reg = <0x0 0xc200000 0x0 0x200000>;
 		memory-region = <&rpmsg_dma_reserved>;
 		status = "okay";
 
@@ -73,10 +76,10 @@
         };
 	};
 
-	rtt_rpmsg: rtt-rpmsg@7a00000 {
+	rtt_rpmsg: rtt-rpmsg@c200000 {
 		compatible = "rockchip,rpmsg";
 		// reg = <0x3a00000 0x020000>;
-		reg = <0x0 0x7a00000 0x0 0x200000>;
+		reg = <0x0 0xc200000 0x0 0x200000>;
 		mbox-names = "rpmsg-rx", "rpmsg-tx";
 		// mboxes = <&mailbox2_amp 0 &mailbox0_amp 0>;
 		mboxes = <&mailbox_rtt 3 &mailbox_rtt 0>;
@@ -93,6 +96,7 @@
 			     "rockchip,rk3368-mailbox";
 		reg = <0x0 0xffae0000 0x0 0x200>;
 		interrupts = <GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>;
+	    interrupt-affinity = <&cpu3>;
 		clocks = <&cru PCLK_MAILBOX>;
 		clock-names = "pclk_mailbox";
 		#mbox-cells = <1>;
@@ -105,4 +109,13 @@
 &mailbox {
 	rockchip,txpoll-period-ms = <1>;
 	status = "okay";
+};
+
+&uart9 {
+	pinctrl-names = "default";
+	interrupt-affinity = <&cpu3>;
+};
+
+&rktimer {
+    interrupt-affinity = <&cpu0>, <&cpu0>, <&cpu0>, <&cpu3>, <&cpu3>, <&cpu3>;
 };

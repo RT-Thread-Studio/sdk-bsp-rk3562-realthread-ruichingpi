@@ -15,7 +15,7 @@
 	rockchip_amp: rockchip-amp {
 		compatible = "rockchip,amp";
 		clocks = <&cru SCLK_UART9>, <&cru PCLK_UART9>,
-		        <&cru PCLK_TIMER>, <&cru CLK_TIMER0>, <&cru CLK_TIMER1>, <&cru CLK_TIMER2>, 
+		        <&cru PCLK_TIMER>, <&cru CLK_TIMER0>, <&cru CLK_TIMER1>, <&cru CLK_TIMER2>,
 				<&cru CLK_TIMER3>, <&cru CLK_TIMER4>, <&cru CLK_TIMER5>,
 				<&cru CLK_GMAC_125M_CRU_I>, <&cru CLK_GMAC_50M_CRU_I>,
 			 	<&cru PCLK_GMAC>, <&cru ACLK_GMAC>;
@@ -47,6 +47,11 @@
 		/* remote amp core address */
 		rtt_reserved {
 			reg = <0x0 0x03f00000 0x0 0x08000000>;
+			no-map;
+		};
+
+        rtt_reserved2 {
+			reg = <0x0 0x0f000000 0x0 0x01000000>;
 			no-map;
 		};
 
