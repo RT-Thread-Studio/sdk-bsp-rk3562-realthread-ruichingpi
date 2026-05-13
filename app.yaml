@@ -331,6 +331,38 @@ example_projects:
     - rtconfig.py
     - SConscript
     - SConstruct
+    source_path_offset: 02_peripheral_cpuid_read
+    target_path_offset: ''
+  - files_and_folders:
+    - rt-thread
+    source_path_offset: .
+    target_path_offset: ''
+  - files_and_folders:
+    - platform
+    source_path_offset: .
+    target_path_offset: ''
+  - files_and_folders:
+    - rk3562.svd
+    source_path_offset: debug/svd/
+    target_path_offset: .settings
+  external_files: []
+  project_description: ''
+  project_name: 02_peripheral_cpuid_read
+  project_type: bare-metal|@notUsed|@notUsed
+- builtin_files:
+  - files_and_folders:
+    - .settings
+    - applications
+    - board
+    - packages
+    - .config
+    - .cproject
+    - .project
+    - Kconfig
+    - rtconfig.h
+    - rtconfig.py
+    - SConscript
+    - SConstruct
     source_path_offset: 02_peripheral_i2c_hym8563
     target_path_offset: ''
   - files_and_folders:
@@ -575,7 +607,7 @@ features_zh:
 - 全场景无线扩展: 集成双频 2.4G/5.8G WiFi 与 BT5.0，提供稳定无线连接；配备 Mini PCIe 扩展接口，支持 4G/5G LTE 通信模块接入，拓展广域通信能力
 pkg_type: Board_Support_Packages
 pkg_vendor: Real-Thread
-pkg_version: 1.2.0
+pkg_version: 1.2.1
 template_projects:
 - builtin_files:
   - files_and_folders:

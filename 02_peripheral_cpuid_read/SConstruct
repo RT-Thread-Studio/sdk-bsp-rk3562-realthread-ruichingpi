@@ -67,6 +67,7 @@ else:
         os.path.join(GetCurrentDir(), RTT_ROOT + '/../platform/dtsi'),
     ]
 DTCFLAGS  = '-b 0 '
+DTCFLAGS += '-Wno-interrupt_provider '
 DTCFLAGS += '-Wno-unit_address_vs_reg '
 DTCFLAGS += '-Wno-avoid_unnecessary_addr_size '
 DTCFLAGS += '-Wno-alias_paths '

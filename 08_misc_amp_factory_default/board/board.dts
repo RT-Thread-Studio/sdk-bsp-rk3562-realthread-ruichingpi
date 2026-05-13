@@ -39,16 +39,16 @@
 
 		/* remote amp core address */
 		amp_shmem_reserved: amp-shmem@c300000 {
-			reg = <0x0 0x0c300000 0x0 0x100000>;
+			reg = <0x0 0x0c500000 0x0 0x100000>;
 			no-map;
 		};
 		rpmsg_reserved: rpmsg@c200000 {
-			reg = <0x0 0x0c200000 0x0 0x100000>;
+			reg = <0x0 0x0c400000 0x0 0x100000>;
 			no-map;
 		};
 		rpmsg_dma_reserved: rpmsg-dma@c300000 {
 			compatible = "shared-dma-pool";
-			reg = <0x0 0x0c300000 0x0 0x100000>;
+			reg = <0x0 0x0c500000 0x0 0x100000>;
 			no-map;
 		};
 
@@ -56,15 +56,13 @@
 
 	/* 目前 rpmsg 大小需要2MB对齐 */
 
-	rpmsg: rpmsg@c200000 {
+	rpmsg: rpmsg@c400000 {
 		compatible = "rockchip,rpmsg";
 		mbox-names = "rpmsg-rx", "rpmsg-tx";
 		mboxes = <&mailbox 0 &mailbox 3>;
 		rockchip,vdev-nums = <1>;
-		/* CPU3: link-id 0x03; MCU: link-id 0x04; */
 		rockchip,link-id = <0x01>;
-		// reg = <0x0 0x7c00000 0x0 0x20000>;
-		reg = <0x0 0xc200000 0x0 0x200000>;
+		reg = <0x0 0xc400000 0x0 0x200000>;
 		memory-region = <&rpmsg_dma_reserved>;
 		status = "okay";
 
@@ -76,15 +74,12 @@
         };
 	};
 
-	rtt_rpmsg: rtt-rpmsg@c200000 {
+	rtt_rpmsg: rtt-rpmsg@c400000 {
 		compatible = "rockchip,rpmsg";
-		// reg = <0x3a00000 0x020000>;
-		reg = <0x0 0xc200000 0x0 0x200000>;
+		reg = <0x0 0xc400000 0x0 0x200000>;
 		mbox-names = "rpmsg-rx", "rpmsg-tx";
-		// mboxes = <&mailbox2_amp 0 &mailbox0_amp 0>;
 		mboxes = <&mailbox_rtt 3 &mailbox_rtt 0>;
 		rockchip,vdev-nums = <1>;
-		/* CPU2: link-id 0x02; */
 		rockchip,link-id = <0x01>;
 		timeout-ms = <5000>;
 		status = "okay,rtt";
@@ -118,4 +113,17 @@
 
 &rktimer {
     interrupt-affinity = <&cpu0>, <&cpu0>, <&cpu0>, <&cpu3>, <&cpu3>, <&cpu3>;
+};
+
+&i2c3 {
+	status = "okay";
+	gt911@14 {
+		compatible = "goodix,gt9xx";
+		reg = <0x14>;
+		pinctrl-names = "default";
+		pinctrl-0 = <&touch_gpio>;
+		goodix_irq_gpio = <&gpio0 RK_PB6 IRQ_TYPE_LEVEL_LOW>;
+		goodix_rst_gpio = <&gpio0 RK_PB5 GPIO_ACTIVE_HIGH>;
+		status = "okay";
+	};
 };

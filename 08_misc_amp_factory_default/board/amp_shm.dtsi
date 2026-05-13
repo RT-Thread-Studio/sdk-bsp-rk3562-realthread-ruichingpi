@@ -4,14 +4,14 @@
         compatible = "amp-shm-device";
         mbox-names = "shm-rx", "shm-tx";
         mboxes = <&mailbox 2 &mailbox 1>;
-        reg = <0x00 0xc000000 0x00 0x200000>;
+        reg = <0x00 0xc000000 0x00 0x400000>;
         memory-region = <&amp_shmem_reserved_1>;
         status = "okay";
     };
 
     rtt_shm: rtt-shm@c000000 {
         compatible = "amp-shm-device";
-        reg = <0x00 0xc000000 0x00 0x200000>;
+        reg = <0x00 0xc000000 0x00 0x400000>;
         mbox-names = "shm-rx", "shm-tx";
         mboxes = <&mailbox_rtt 1 &mailbox_rtt 2>;
         status = "okay,rtt";
@@ -20,8 +20,8 @@
 
 &reserved_memory {
     amp_shmem_reserved_1: amp_shm@c000000 {
-        reg = <0x0 0x0c000000 0x0 0x200000>;
+        reg = <0x0 0x0c000000 0x0 0x400000>;
         no-map;
-    };  
+    };
 };
 
